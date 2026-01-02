@@ -1,0 +1,16 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #000; /* or use your theme bg */
+}
+body {
+  font-family: var(--ant-font-family);
+}
+html,
+body,
+#root {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}

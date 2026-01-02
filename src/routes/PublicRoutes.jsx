@@ -1,12 +1,16 @@
-import { Navigate, Outlet } from 'react-router'
-import { useSelector } from 'react-redux'
-
-export default function PublicRoute() {
-    //   const { isAuthenticated } = useSelector((state) => state.auth)
-
-    //   if (isAuthenticated) {
-    //     return <Navigate to="/" replace />
-    //   }
-
-    return <Outlet />
+import { Outlet } from "react-router";
+import Signin from "../pages/auth/Signin";
+import Signup from "../pages/auth/Signup";
+export const publicRoutes = [
+  {
+    path: "/login",
+    element: <Signin />,
+  },
+  {
+    path: "/register",
+    element: <Signup />,
+  },
+];
+export default function PublicRoutes() {
+  return <Outlet />;
 }

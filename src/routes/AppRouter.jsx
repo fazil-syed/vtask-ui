@@ -1,21 +1,26 @@
 import { createBrowserRouter } from "react-router";
-import PublicRoute from "./PublicRoutes";
 import MainLayout from "../layouts/MainLayout";
-import TasksPage from "../pages/Tasks";
+import AuthLayout from "../layouts/AuthLayout";
+import ProtectedRoutes, { protectedRoutes } from "./ProtectedRoutes";
+import PublicRoutes, { publicRoutes } from "./PublicRoutes";
 
 export const router = createBrowserRouter([
-    {
-        element: <PublicRoute />,
-        children: [
-            {
-                element: <MainLayout />,
-                children: [
-                    {
-                        path: '/',
-                        element: <TasksPage />
-                    }
-                ]
-            }
-        ]
-    }
-])
+  {
+    element: <ProtectedRoutes />,
+    children: [
+      {
+        element: <MainLayout />,
+        children: protectedRoutes,
+      },
+    ],
+  },
+  {
+    element: <PublicRoutes />,
+    children: [
+      {
+        element: <AuthLayout />,
+        children: publicRoutes,
+      },
+    ],
+  },
+]);
