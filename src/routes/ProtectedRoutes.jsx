@@ -1,8 +1,9 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Navigate, Outlet } from "react-router";
 import { HomeOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
+import { Navigate, Outlet } from "react-router";
+import { useFetchUserQuery } from "../features/auth/authApi";
 import TasksPage from "../pages/Tasks";
+import { useSelector } from "react-redux";
 
 export const protectedNavigationItems = {
   home: {
@@ -21,8 +22,12 @@ export const protectedRoutes = Object.values(protectedNavigationItems).map(
   }
 );
 const ProtectedRoutes = () => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  return isAuthenticated ? <Outlet /> : <Navigate to={"/login"} replace />;
+  const isLoggedOut = useSelector((state) => state.auth.isLoggedOut);
+  const { data: user, isLoading } = useFetchUserQuery(undefined, {
+    skip: isLoggedOut,
+  });
+  if (isLoading) return <Spin fullscreen />;
+  return user ? <Outlet /> : <Navigate to={"/login"} replace />;
 };
 
 export default ProtectedRoutes;

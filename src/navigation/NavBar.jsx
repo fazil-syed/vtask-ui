@@ -1,10 +1,4 @@
-import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
-import { Layout, Menu } from "antd";
-import React from "react";
+import { Menu } from "antd";
 import { protectedNavigationItems } from "../routes/ProtectedRoutes";
 
 const NavBar = () => {

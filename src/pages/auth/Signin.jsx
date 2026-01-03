@@ -1,32 +1,45 @@
-import { Button, Card, Flex, Form, Input, Space } from "antd";
+import { Alert, Button, Card, Flex, Form, Input, Space } from "antd";
 import Link from "antd/es/typography/Link";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
-import { logInSuccess } from "../../features/auth/authSlice";
+import { useState } from "react";
+import { Navigate, useNavigate } from "react-router";
+import {
+  useFetchUserQuery,
+  useLoginUserMutation,
+} from "../../features/auth/authApi";
+import { useDispatch, useSelector } from "react-redux";
+import { markLoggedIn } from "../../features/auth/authSlice";
 const Login = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const handleLogin = () => {
-    dispatch(
-      logInSuccess({
-        user: { name: "Syed Fazil" },
-        token: "fake-jwt",
-      })
-    );
-    navigate("/");
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+  const isLoggedOut = useSelector((s) => s.auth.isLoggedOut);
+  const { data: user } = useFetchUserQuery(undefined, {
+    skip: isLoggedOut,
+  });
+  const [apiError, setApiError] = useState(null);
+  const handleLogin = async (values) => {
+    const loginPayload = {
+      email: values.email,
+      password: values.password,
+    };
+    try {
+      await loginUser(loginPayload).unwrap();
+      dispatch(markLoggedIn());
+      navigate("/");
+    } catch (error) {
+      setApiError(error.data.error);
+    }
   };
 
-  const onFinish = (values) => {
-    console.log(values);
-    handleLogin();
+  const onFinish = async (values) => {
+    await handleLogin(values);
   };
-  const onFinishFailed = (errInfo) => {
-    console.log("Failed Login:", errInfo);
-  };
-
+  if (user) {
+    return <Navigate to={"/"} replace />;
+  }
   return (
     <Flex align="center" justify="center" style={{ minHeight: "100vh" }}>
       <Card
@@ -57,22 +70,32 @@ const Login = () => {
             </Title>
             <Text type="secondary">Welcome back to vtask</Text>
           </div>
+          {apiError && (
+            <Alert
+              type="error"
+              title={apiError}
+              showIcon
+              closable={{
+                onClose: () => setApiError(null),
+              }}
+            />
+          )}
           <Form
             form={form}
             name="signin"
             layout="vertical"
             requiredMark={false}
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
+            onValuesChange={() => apiError && setApiError(null)}
             initialValues={{ remember: true }}
           >
             <Form.Item
-              label="Username"
-              name="username"
+              label="Email"
+              name="email"
               rules={[
                 {
                   required: true,
-                  message: "Please input your username!",
+                  message: "Please input your email!",
                 },
               ]}
             >
@@ -89,7 +112,12 @@ const Login = () => {
               <Input.Password />
             </Form.Item>
             <Form.Item label={null}>
-              <Button type="primary" htmlType="submit" block>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                loading={isLoading}
+              >
                 Login
               </Button>
             </Form.Item>

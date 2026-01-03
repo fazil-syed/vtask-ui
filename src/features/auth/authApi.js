@@ -10,7 +10,30 @@ export const authApi = baseApi.injectEndpoints({
       //   transformResponse : (response,meta,erg) => response.data,
       invalidatesTags: ["Auth"],
     }),
+    loginUser: builder.mutation({
+      query: (loginPayload) => ({
+        url: "/auth/login",
+        body: loginPayload,
+        method: "POST",
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+    logoutUser: builder.mutation({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
+    }),
+    fetchUser: builder.query({
+      query: () => "/auth/me",
+      providesTags: ["Auth"],
+    }),
   }),
 });
 
-export const { useRegisterNewUserMutation } = authApi;
+export const {
+  useRegisterNewUserMutation,
+  useFetchUserQuery,
+  useLoginUserMutation,
+  useLogoutUserMutation,
+} = authApi;
