@@ -1,16 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-  isLoggedOut: false,
+  authState: "unknown", // unknown | authenticated | unauthenticated
 };
 const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
     markLoggedOut(state) {
-      state.isLoggedOut = true;
+      state.authState = "unauthenticated";
     },
     markLoggedIn(state) {
-      state.isLoggedOut = false;
+      state.authState = "authenticated";
     },
   },
 });

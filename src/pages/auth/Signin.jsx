@@ -4,10 +4,7 @@ import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router";
-import {
-  useFetchUserQuery,
-  useLoginUserMutation,
-} from "../../features/auth/authApi";
+import { useLoginUserMutation } from "../../features/auth/authApi";
 import { useDispatch, useSelector } from "react-redux";
 import { markLoggedIn } from "../../features/auth/authSlice";
 const Login = () => {
@@ -15,10 +12,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [loginUser, { isLoading }] = useLoginUserMutation();
-  const isLoggedOut = useSelector((s) => s.auth.isLoggedOut);
-  const { data: user } = useFetchUserQuery(undefined, {
-    skip: isLoggedOut,
-  });
+  const authState = useSelector((s) => s.auth.authState);
   const [apiError, setApiError] = useState(null);
   const handleLogin = async (values) => {
     const loginPayload = {
@@ -37,7 +31,7 @@ const Login = () => {
   const onFinish = async (values) => {
     await handleLogin(values);
   };
-  if (user) {
+  if (authState === "authenticated") {
     return <Navigate to={"/"} replace />;
   }
   return (
@@ -122,6 +116,16 @@ const Login = () => {
               </Button>
             </Form.Item>
           </Form>
+          <Button
+            variant="solid"
+            color="pink"
+            onClick={() =>
+              (window.location.href = "http://localhost:8080/auth/google")
+            }
+            block
+          >
+            Login with Google
+          </Button>
           <Text
             type="secondary"
             style={{

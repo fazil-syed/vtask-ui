@@ -1,7 +1,10 @@
-import { Layout, theme } from "antd";
+import { Button, Layout, theme } from "antd";
 import { Outlet } from "react-router";
 import NavBar from "../navigation/NavBar";
 import TopBar from "../navigation/TopBar";
+import { useDispatch } from "react-redux";
+import { useLogoutUserMutation } from "../features/auth/authApi";
+import { markLoggedOut } from "../features/auth/authSlice";
 const { Header, Content, Footer, Sider } = Layout;
 
 export default function MainLayout() {
@@ -13,7 +16,8 @@ export default function MainLayout() {
       colorBorderSecondary,
     },
   } = theme.useToken();
-
+  const dispatch = useDispatch();
+  const [logoutUser] = useLogoutUserMutation();
   const siderStyle = {
     overflow: "auto",
     position: "sticky",
@@ -39,6 +43,14 @@ export default function MainLayout() {
     height: "3rem",
     lineHeight: "3rem",
   };
+  const handleLogout = async () => {
+    try {
+      await logoutUser().unwrap();
+      dispatch(markLoggedOut());
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Layout
       style={{
@@ -56,7 +68,30 @@ export default function MainLayout() {
         hasSider
       >
         <Sider style={siderStyle}>
-          <NavBar />
+          <div
+            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
+            <div style={{ flex: 1, overflow: "auto" }}>
+              <NavBar />
+            </div>
+            <div
+              style={{
+                marginTop: "auto",
+                padding: "8px 12px",
+              }}
+            >
+              <Button
+                type="primary"
+                danger
+                style={{ marginTop: "auto", borderRadius: 8 }}
+                block
+                onClick={handleLogout}
+                size="middle"
+              >
+                Logout
+              </Button>
+            </div>
+          </div>
         </Sider>
         <Layout
           style={{
