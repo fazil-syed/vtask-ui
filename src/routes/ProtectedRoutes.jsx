@@ -1,8 +1,7 @@
 import { HomeOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
-import { Navigate, Outlet } from "react-router";
-import TasksPage from "../pages/Tasks";
 import { useSelector } from "react-redux";
+import { Navigate, Outlet } from "react-router";
+import TasksPage from "../pages/tasks/Tasks";
 
 export const protectedNavigationItems = {
   home: {

@@ -105,7 +105,7 @@ const Login = () => {
             >
               <Input.Password />
             </Form.Item>
-            <Form.Item label={null}>
+            <Form.Item label={null} style={{ marginBottom: 0 }}>
               <Button
                 type="primary"
                 htmlType="submit"

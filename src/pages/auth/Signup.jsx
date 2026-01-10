@@ -2,7 +2,7 @@ import { Alert, Button, Card, Flex, Form, Input, Space } from "antd";
 import Link from "antd/es/typography/Link";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useRegisterNewUserMutation } from "../../features/auth/authApi";
 import { useState } from "react";
@@ -10,6 +10,8 @@ const SignUp = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [apiError, setApiError] = useState(null);
+  const authState = useSelector((s) => s.auth.authState);
+
   const [registerNewUser, { isLoading }] = useRegisterNewUserMutation();
 
   const onFinish = async (values) => {
@@ -25,6 +27,9 @@ const SignUp = () => {
       setApiError(error.data.error);
     }
   };
+  if (authState === "authenticated") {
+    return <Navigate to={"/"} replace />;
+  }
   return (
     <Flex align="center" justify="center" style={{ minHeight: "100vh" }}>
       <Card
@@ -128,7 +133,7 @@ const SignUp = () => {
             >
               <Input.Password placeholder="re-enter your password" />
             </Form.Item>
-            <Form.Item label={null}>
+            <Form.Item label={null} style={{ marginBottom: 0 }}>
               <Button
                 type="primary"
                 htmlType="submit"
@@ -139,6 +144,16 @@ const SignUp = () => {
               </Button>
             </Form.Item>
           </Form>
+          <Button
+            variant="solid"
+            color="pink"
+            onClick={() =>
+              (window.location.href = "http://localhost:8080/auth/google")
+            }
+            block
+          >
+            Login with Google
+          </Button>
           <Text
             type="secondary"
             style={{
