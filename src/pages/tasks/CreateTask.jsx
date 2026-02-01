@@ -1,4 +1,4 @@
-import { Card, DatePicker, Form, Input, Modal, Space } from "antd";
+import { Alert, Card, DatePicker, Form, Input, Modal, Space } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import Title from "antd/es/typography/Title";
 import { useAddTasksMutation } from "../../features/tasks/tasksApi";
@@ -25,7 +25,7 @@ const CreateTask = ({ open, close }) => {
       console.log(createResponse);
     } catch (error) {
       console.log(error);
-      setApiError(error.data.message);
+      setApiError(error.data.error);
     }
   };
 
@@ -40,6 +40,14 @@ const CreateTask = ({ open, close }) => {
       closable={false}
       onOk={onOk}
     >
+      {apiError && (
+        <Alert
+          title={apiError}
+          type="error"
+          showIcon
+          style={{ marginBottom: 12 }}
+        />
+      )}
       <Card
         variant="outlined"
         styles={{
