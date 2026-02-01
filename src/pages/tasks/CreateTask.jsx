@@ -1,14 +1,32 @@
 import { Card, DatePicker, Form, Input, Modal, Space } from "antd";
-import Title from "antd/es/typography/Title";
-import Text from "antd/es/typography/Text";
-import React from "react";
 import TextArea from "antd/es/input/TextArea";
+import Title from "antd/es/typography/Title";
+import { useAddTasksMutation } from "../../features/tasks/tasksApi";
+import { useEffect, useState } from "react";
 
 const CreateTask = ({ open, close }) => {
   const [form] = Form.useForm();
+  const [addTasks, { isLoading }] = useAddTasksMutation();
+  const [apiError, setApiError] = useState(null);
+  useEffect(() => {
+    console.log(apiError);
+  }, [apiError]);
   const onFinish = async (values) => {
-    values["due-date"] = values["due-date"]?.format("YYYY-MM-DD HH:mm");
+    // values["due_date"] = values["due_date"]?.format("YYYY-MM-DD HH:mm");
     console.log(values);
+    const createPayload = {
+      title: values?.title,
+      content: values?.content,
+      due_date: values?.due_date?.format("YYYY-MM-DD HH:mm"),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+    try {
+      const createResponse = await addTasks(createPayload).unwrap();
+      console.log(createResponse);
+    } catch (error) {
+      console.log(error);
+      setApiError(error.data.message);
+    }
   };
 
   const onOk = () => {
@@ -81,7 +99,7 @@ const CreateTask = ({ open, close }) => {
             >
               <TextArea />
             </Form.Item>
-            <Form.Item label="Due Date" name={"due-date"}>
+            <Form.Item label="Due Date" name={"due_date"}>
               <DatePicker
                 size="large"
                 showTime={{ format: "HH:mm" }} // 1. Removes seconds from the dropdown                placeholder="Pick the due date"

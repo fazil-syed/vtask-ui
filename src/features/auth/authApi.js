@@ -1,4 +1,6 @@
+import { createListenerMiddleware } from "@reduxjs/toolkit";
 import { baseApi } from "../../services/baseApi";
+import { markLoggedOut } from "./authSlice";
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     registerNewUser: builder.mutation({
@@ -37,3 +39,11 @@ export const {
   useLoginUserMutation,
   useLogoutUserMutation,
 } = authApi;
+
+export const authListener = createListenerMiddleware();
+authListener.startListening({
+  actionCreator: markLoggedOut,
+  effect: async (_, api) => {
+    api.dispatch(baseApi.util.resetApiState());
+  },
+});
