@@ -1,4 +1,4 @@
-import { Card, Form, Input, Modal, Space } from "antd";
+import { Card, DatePicker, Form, Input, Modal, Space } from "antd";
 import Title from "antd/es/typography/Title";
 import Text from "antd/es/typography/Text";
 import React from "react";
@@ -7,6 +7,7 @@ import TextArea from "antd/es/input/TextArea";
 const CreateTask = ({ open, close }) => {
   const [form] = Form.useForm();
   const onFinish = async (values) => {
+    values["due-date"] = values["due-date"]?.format("YYYY-MM-DD HH:mm");
     console.log(values);
   };
 
@@ -79,6 +80,14 @@ const CreateTask = ({ open, close }) => {
               ]}
             >
               <TextArea />
+            </Form.Item>
+            <Form.Item label="Due Date" name={"due-date"}>
+              <DatePicker
+                size="large"
+                showTime={{ format: "HH:mm" }} // 1. Removes seconds from the dropdown                placeholder="Pick the due date"
+                style={{ width: "100%" }}
+                format="YYYY-MM-DD HH:mm" // 2. Removes seconds from the input box display
+              />
             </Form.Item>
           </Form>
         </Space>

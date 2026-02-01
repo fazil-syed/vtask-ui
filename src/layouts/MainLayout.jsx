@@ -5,6 +5,7 @@ import TopBar from "../navigation/TopBar";
 import { useDispatch } from "react-redux";
 import { useLogoutUserMutation } from "../features/auth/authApi";
 import { markLoggedOut } from "../features/auth/authSlice";
+import { baseApi } from "../services/baseApi";
 const { Header, Content, Footer, Sider } = Layout;
 
 export default function MainLayout() {
@@ -47,6 +48,7 @@ export default function MainLayout() {
     try {
       await logoutUser().unwrap();
       dispatch(markLoggedOut());
+      dispatch(baseApi.util.resetApiState());
     } catch (error) {
       console.log(error);
     }

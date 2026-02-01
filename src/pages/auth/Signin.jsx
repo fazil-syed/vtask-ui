@@ -24,6 +24,8 @@ const Login = () => {
       dispatch(markLoggedIn());
       navigate("/");
     } catch (error) {
+      console.log(error);
+
       setApiError(error.data.error);
     }
   };
