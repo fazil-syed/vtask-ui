@@ -25,7 +25,7 @@ const CreateTask = ({ open, close }) => {
     console.log(values);
     const createPayload = {
       title: values?.title,
-      content: values?.content,
+      content: values?.content || "",
       due_date: values?.due_date?.format("YYYY-MM-DD HH:mm"),
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
@@ -34,15 +34,14 @@ const CreateTask = ({ open, close }) => {
       notificationApi.success({
         title: createResponse?.message,
       });
+      close();
     } catch (error) {
-      console.log(error);
       setApiError(error.data.error);
     }
   };
 
   const onOk = () => {
     form.submit();
-    close();
   };
   return (
     <Modal
@@ -112,7 +111,7 @@ const CreateTask = ({ open, close }) => {
               name={"content"}
               rules={[
                 {
-                  required: true,
+                  // required: true,
                   message: "Please add the task details",
                 },
               ]}
