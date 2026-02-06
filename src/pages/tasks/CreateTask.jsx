@@ -1,28 +1,15 @@
-import {
-  Alert,
-  Card,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Modal,
-  Space,
-} from "antd";
+import { Alert, Card, DatePicker, Form, Input, Modal, Space } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import Title from "antd/es/typography/Title";
-import { useAddTasksMutation } from "../../features/tasks/tasksApi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { notificationApi } from "../../components/notification";
+import { useAddTasksMutation } from "../../features/tasks/tasksApi";
 
 const CreateTask = ({ open, close }) => {
   const [form] = Form.useForm();
-  const [addTasks, { isLoading }] = useAddTasksMutation();
+  const [addTasks] = useAddTasksMutation();
   const [apiError, setApiError] = useState(null);
-  useEffect(() => {
-    console.log(apiError);
-  }, [apiError]);
   const onFinish = async (values) => {
-    console.log(values);
     const createPayload = {
       title: values?.title,
       content: values?.content || "",
@@ -34,6 +21,7 @@ const CreateTask = ({ open, close }) => {
       notificationApi.success({
         title: createResponse?.message,
       });
+      form.resetFields();
       close();
     } catch (error) {
       setApiError(error.data.error);

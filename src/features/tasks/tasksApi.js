@@ -15,8 +15,22 @@ export const tasksApi = baseApi.injectEndpoints({
     }),
     markTaskCompleted: builder.mutation({
       query: (taskID) => ({
-        url: `/tasks/${taskID}`,
+        url: `/tasks/mark-complete/${taskID}`,
         method: "POST",
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+    markTaskInCompleted: builder.mutation({
+      query: (taskID) => ({
+        url: `/tasks/mark-incomplete/${taskID}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+    deleteTask: builder.mutation({
+      query: (taskID) => ({
+        url: `/tasks/delete/${taskID}`,
+        method: "DELETE",
       }),
       invalidatesTags: ["Tasks"],
     }),
@@ -27,4 +41,6 @@ export const {
   useGetTasksQuery,
   useAddTasksMutation,
   useMarkTaskCompletedMutation,
+  useMarkTaskInCompletedMutation,
+  useDeleteTaskMutation,
 } = tasksApi;

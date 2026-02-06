@@ -34,7 +34,7 @@ export default function TasksPage() {
       </Row>
       <Row gutter={[16, 16]}>
         {tasks?.map((task) => (
-          <Col key={task.id} span={6}>
+          <Col key={task.id} span={24}>
             <TasksCard task={task} />
           </Col>
         ))}
