@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { markLoggedOut } from "../features/auth/authSlice";
+const baseUrl = import.meta.env.VITE_API_BASE || "";
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "/api",
+  baseUrl: baseUrl,
   credentials: "include",
 });
 const customBaseQuery = async (args, api, extraOptions) => {

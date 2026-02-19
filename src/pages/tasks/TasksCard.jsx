@@ -3,6 +3,8 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
+  ItemFooter,
+  ItemHeader,
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
@@ -13,7 +15,10 @@ import {
   useMarkTaskInCompletedMutation,
 } from "../../features/tasks/tasksApi";
 import { Spinner } from "@/components/ui/spinner";
-import { Check, CircleX, Trash } from "lucide-react";
+import { Check, CircleX, Edit, Trash } from "lucide-react";
+import { useState } from "react";
+import EditTask from "./EditTask";
+import { formatDate } from "@/lib/utils";
 
 const TasksCard = ({ task }) => {
   const [markTaskCompleted] = useMarkTaskCompletedMutation();
@@ -59,8 +64,18 @@ const TasksCard = ({ task }) => {
       });
     }
   };
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
   return (
     <>
+      <EditTask
+        open={isEditModalOpen}
+        close={handleCloseEditModal}
+        task={task}
+      />
       <Item
         variant="outlined"
         className={` ${
@@ -70,33 +85,48 @@ const TasksCard = ({ task }) => {
         {/* {isLoading && <Spinner />} */}
         {
           <>
-            <ItemContent>
+            <ItemHeader>
               <ItemTitle>{task.title}</ItemTitle>
+              <ItemActions>
+                <ItemMedia
+                  variant="avatar"
+                  className="rounded-4xl p-0.5 hover:cursor-pointer hover:bg-green-500"
+                  onClick={markCompleteTask}
+                >
+                  <Check className="size-4" />
+                </ItemMedia>
+                <ItemMedia
+                  variant="avatar"
+                  className="rounded-4xl p-0.5 hover:cursor-pointer hover:bg-red-500"
+                  onClick={markInCompleteTask}
+                >
+                  <CircleX className="size-4" />
+                </ItemMedia>
+                <ItemMedia
+                  variant="avatar"
+                  className="rounded-4xl p-0.5 hover:cursor-pointer hover:bg-red-500"
+                  onClick={taskDelete}
+                >
+                  <Trash className="size-4" />
+                </ItemMedia>
+                <ItemMedia
+                  variant="avatar"
+                  className="rounded-4xl p-0.5 hover:cursor-pointer hover:bg-gray-400"
+                  onClick={() => setIsEditModalOpen(true)}
+                >
+                  <Edit className="size-4" />
+                </ItemMedia>
+              </ItemActions>
+            </ItemHeader>
+            <ItemContent>
               <ItemDescription>{task.content}</ItemDescription>
             </ItemContent>
-            <ItemActions>
-              <ItemMedia
-                variant="avatar"
-                className="rounded-4xl p-0.5 hover:cursor-pointer hover:bg-green-500"
-                onClick={markCompleteTask}
-              >
-                <Check className="size-4" />
-              </ItemMedia>
-              <ItemMedia
-                variant="avatar"
-                className="rounded-4xl p-0.5 hover:cursor-pointer hover:bg-red-500"
-                onClick={markInCompleteTask}
-              >
-                <CircleX className="size-4" />
-              </ItemMedia>
-              <ItemMedia
-                variant="avatar"
-                className="rounded-4xl p-0.5 hover:cursor-pointer hover:bg-red-500"
-                onClick={taskDelete}
-              >
-                <Trash className="size-4" />
-              </ItemMedia>
-            </ItemActions>
+            <ItemFooter>
+              <div>
+                <span className="font-semibold">Due on</span>{" "}
+                {formatDate(task?.due_at)}
+              </div>
+            </ItemFooter>
           </>
         }
       </Item>

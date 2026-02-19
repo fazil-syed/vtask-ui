@@ -122,7 +122,7 @@ const Login = () => {
             variant="solid"
             color="pink"
             onClick={() =>
-              (window.location.href = "http://localhost:8080/auth/google")
+              (window.location.href = `${import.meta.env.VITE_API_BASE}/auth/google`)
             }
             block
           >

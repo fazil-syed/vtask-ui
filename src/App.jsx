@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { markLoggedIn, markLoggedOut } from "./features/auth/authSlice.js";
 import { baseApi } from "./services/baseApi.js";
 import { NotificationProvider } from "./components/notification.jsx";
+import { subscribeUser } from "@/lib/push.js";
 
 function App() {
   const mode = useSelector((state) => state.settings.mode);
@@ -17,7 +18,10 @@ function App() {
     skip: authState !== "unknown",
   });
   useEffect(() => {
-    if (user) dispatch(markLoggedIn());
+    if (user) {
+      dispatch(markLoggedIn());
+      subscribeUser();
+    }
     if (isError) {
       dispatch(markLoggedOut());
       dispatch(baseApi.util.resetApiState());

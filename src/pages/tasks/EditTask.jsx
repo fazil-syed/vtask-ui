@@ -1,49 +1,29 @@
-import {
-  Alert,
-  Card,
-  Checkbox,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Space,
-} from "antd";
+import dayjs from "dayjs";
+import { Alert, Card, DatePicker, Form, Input, Modal, Space } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import Title from "antd/es/typography/Title";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { notificationApi } from "../../components/notification";
-import { useAddTasksMutation } from "../../features/tasks/tasksApi";
-import dayjs from "dayjs";
+import { useEditTaskMutation } from "../../features/tasks/tasksApi";
 
-const REMINDER_OPTIONS = [
-  { label: "5 minutes before", value: 5 },
-  { label: "1 hour before", value: 60 },
-  { label: "5 hours before", value: 300 },
-  { label: "1 day before", value: 1440 },
-];
-
-const CreateTask = ({ open, close }) => {
+const EditTask = ({ open, close, task }) => {
   const [form] = Form.useForm();
-  const [addTasks] = useAddTasksMutation();
+  const [editTask] = useEditTaskMutation();
   const [apiError, setApiError] = useState(null);
-  const dueDate = Form.useWatch("due_date", form);
-  const diffMinutes = dueDate?.diff(dayjs(), "minute");
-  const filteredOptions = REMINDER_OPTIONS.filter(
-    (opt) => opt.value < diffMinutes
-  );
-
   const onFinish = async (values) => {
-    const createPayload = {
+    const updatePayload = {
       title: values?.title,
       content: values?.content || "",
       due_date: values?.due_date?.format("YYYY-MM-DD HH:mm"),
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      reminders: (values?.reminders || []).map((minutes) => ({
-        offset_minutes: minutes,
-      })),
+    };
+    const payload = {
+      taskID: task.id,
+      payload: updatePayload,
     };
     try {
-      const createResponse = await addTasks(createPayload).unwrap();
+      const createResponse = await editTask(payload).unwrap();
+
       notificationApi.success({
         title: createResponse?.message,
       });
@@ -53,6 +33,15 @@ const CreateTask = ({ open, close }) => {
       setApiError(error.data.error);
     }
   };
+  useEffect(() => {
+    if (task && open) {
+      form.setFieldsValue({
+        title: task.title,
+        content: task.content,
+        due_date: task.due_at ? dayjs(task.due_at) : null,
+      });
+    }
+  }, [task, open, form]);
 
   const onOk = () => {
     form.submit();
@@ -91,22 +80,16 @@ const CreateTask = ({ open, close }) => {
           <div
             style={{
               textAlign: "center",
-              // display: "flex",
-              // justifyContent: "space-between",
             }}
           >
             <Title
-              className="inline-block"
               level={4}
               style={{
                 marginTop: 0,
               }}
             >
-              Create a new task
+              Edit task
             </Title>
-            {/* <span>
-              <STT />
-            </span> */}
           </div>
           <Form
             form={form}
@@ -136,6 +119,7 @@ const CreateTask = ({ open, close }) => {
                 },
               ]}
             >
+              {console.log(task)}
               <TextArea />
             </Form.Item>
             <Form.Item label="Due Date" name={"due_date"}>
@@ -146,18 +130,6 @@ const CreateTask = ({ open, close }) => {
                 format="YYYY-MM-DD HH:mm" // 2. Removes seconds from the input box display
               />
             </Form.Item>
-            {dueDate && (
-              <Form.Item label="Reminders" name="reminders">
-                <Checkbox.Group
-                  options={filteredOptions}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 6,
-                  }}
-                />
-              </Form.Item>
-            )}
           </Form>
         </Space>
       </Card>
@@ -165,4 +137,4 @@ const CreateTask = ({ open, close }) => {
   );
 };
 
-export default CreateTask;
+export default EditTask;
