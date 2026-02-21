@@ -11,7 +11,6 @@ export async function subscribeUser() {
     console.log("Already subscribed");
     return;
   }
-
   if (Notification.permission === "denied") {
     console.log("User blocked notifications");
     return;

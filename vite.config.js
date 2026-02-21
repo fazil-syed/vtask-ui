@@ -10,13 +10,13 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      devOptions: {
-        enabled: false,
-      },
       strategies: "injectManifest",
       srcDir: "src",
       filename: "service-worker.js",
       scope: "/",
+      injectManifest: {
+        swSrc: "src/service-worker.js",
+      },
     }),
   ],
   // server: {
