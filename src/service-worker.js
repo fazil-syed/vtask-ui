@@ -18,7 +18,11 @@ self.addEventListener("message", (event) => {
 cleanupOutdatedCaches();
 if (import.meta.env.PROD) {
   // to allow work offline
-  registerRoute(new NavigationRoute(createHandlerBoundToURL("index.html")));
+  registerRoute(
+    new NavigationRoute(createHandlerBoundToURL("index.html"), {
+      denylist: [/^\/api\//],
+    }),
+  );
 }
 self.addEventListener("push", onPush);
 self.addEventListener("notificationclick", onNotificationClick);
@@ -32,7 +36,7 @@ export function onPush(event) {
     event.waitUntil(
       self.registration.showNotification(title, {
         ...rest,
-      })
+      }),
     );
   }
 }
@@ -49,7 +53,7 @@ export function onNotificationClick(event) {
 function findBestClient(clients) {
   const focusedClient = clients.find((client) => client.focused);
   const visibleClient = clients.find(
-    (client) => client.visibilityState === "visible"
+    (client) => client.visibilityState === "visible",
   );
 
   return focusedClient || visibleClient || clients[0];
