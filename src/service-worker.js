@@ -1,5 +1,6 @@
 /// <reference lib="WebWorker" />
 /// <reference types="vite/client" />
+const SW_VERSION = "v2";
 import {
   cleanupOutdatedCaches,
   createHandlerBoundToURL,
