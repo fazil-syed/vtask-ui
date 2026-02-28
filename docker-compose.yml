@@ -1,0 +1,8 @@
+services:
+   ui:
+    build: .
+    container_name: vtask-ui
+    env_file:
+      - .env 
+    ports:
+      - 4004:80

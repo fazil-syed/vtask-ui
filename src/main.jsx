@@ -4,8 +4,9 @@ import { Provider } from "react-redux";
 import App from "./App.jsx";
 import { store } from "./app/store/store.js";
 import "./index.css";
+import { startServerSentEventListener } from "./sse.js";
 
-if ("servieWorker" in navigator) {
+if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     const reg = await navigator.serviceWorker.register("/service-worker.js");
     reg.update();
@@ -15,34 +16,10 @@ if ("servieWorker" in navigator) {
       refreshing = true;
       window.location.reload();
     });
-    // reg.addEventListener("updatefound", () => {
-    //   const newWorker = reg.installing;
-
-    //   newWorker.addEventListener("statechange", () => {
-    //     if (newWorker.state == "activated") {
-    //       window.location.reload();
-    //     }
-    //   });
-    // });
   });
 }
 
-var stream = new EventSource(`${import.meta.env.VITE_API_BASE}/tasks/stream`, {
-  withCredentials: true,
-});
-
-stream.onopen = function (event) {
-  console.log(event);
-};
-stream.onmessage = function (event) {
-  console.log(event);
-  alert(event?.data);
-};
-
-stream.onerror = function (event) {
-  console.log(event);
-  stream.close();
-};
+startServerSentEventListener();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
